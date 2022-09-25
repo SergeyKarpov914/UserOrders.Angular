@@ -1,23 +1,24 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, catchError, tap, throwError, map } from "rxjs";
+import { Observable, catchError, tap, throwError, map, of } from "rxjs";
 
-import { IOrder } from "./order";
+import { IOrder } from "./interfaces";
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderListService {
-  private orderUrl = 'http://localhost:4210/api/orders/2';
-
+  private orderUrl = 'http://localhost:4210/api/orders/';
+  selectedUser: number = -1;
+  
   constructor(private http: HttpClient) { }
 
-  getOrders(): Observable<IOrder[]> {
-    return this.http.get<IOrder[]>(this.orderUrl)  // add user id
-      .pipe(
-        tap(data => console.log('All: ', JSON.stringify(data))),
-        catchError(this.handleError)
-      );
+  getOrders(id: number): Observable<IOrder[]> {
+      return this.http.get<IOrder[]>(this.orderUrl + id) 
+        .pipe(
+          tap(data => console.log('All: ', JSON.stringify(data))),
+          catchError(err => of([]))
+        );
   }
 
   private handleError(err: HttpErrorResponse): Observable<never> {
@@ -30,5 +31,4 @@ export class OrderListService {
     console.error(errorMessage);
     return throwError(() => errorMessage);
   }
-
 }

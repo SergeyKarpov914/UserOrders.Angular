@@ -1,10 +1,26 @@
-<div class='card'>
-    <div class='card-body'>
+
+<div class="row">
+    <div class="column">
+        <label font-family:Calibry>Employees</label>
         <ag-grid-angular 
-            style="width: 700px; height: 500px;" 
+            style="width: 420px; height:500px" 
             class="ag-theme-balham"
-            [rowData]="rowData" 
-            [columnDefs]="columnDefs">
+            rowSelection="single"
+            (selectionChanged)="onSelectionChanged()"
+            (gridReady)="onGridReady($event)"
+            [rowData]="rowDataUser" 
+            [columnDefs]="columnDefsUser"
+            [defaultColDef]="defaultColDef">
+        </ag-grid-angular>        
+    </div>
+    <div class="column">
+        <label>Orders</label>
+        <ag-grid-angular 
+            style="width: 100%; height: 500px; align-self: stretch;" 
+            class="ag-theme-balham"
+            [rowData]="rowDataOrder" 
+            [columnDefs]="columnDefsOrder"
+            [defaultColDef]="defaultColDef">
         </ag-grid-angular>        
     </div>
 </div>

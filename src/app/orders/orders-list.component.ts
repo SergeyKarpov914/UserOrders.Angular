@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
+import { GridApi, GridReadyEvent, ValueFormatterParams } from 'ag-grid-community';
 import { Subscription } from "rxjs";
-import { IOrder } from "./order";
-import { IUser } from "./order-user";
+import { IOrder } from "./interfaces";
+import { IUser } from "./interfaces";
 import { OrderUserService } from "./order-user.service";
 import { OrderListService } from "./orders-list.service";
 
@@ -10,50 +11,86 @@ import { OrderListService } from "./orders-list.service";
     templateUrl: './orders-list.component.html',
     styleUrls: ['./orders-list.component.css']
  })
- export class OrderListComponent implements OnInit, OnDestroy{
+ export class OrderListComponent implements OnDestroy{
     title = 'UserOrders';
     errorMessage = '';
     sub!: Subscription;
+    
+    private gridApi!: GridApi<IUser>;
 
-    columnDefs = [
-    {headerName: 'OrderID',        field: 'id'},
-    {headerName: 'CustomerID',     field: 'customer'},
-    {headerName: 'EmployeeID',     field: 'employee'},
-    {headerName: 'OrderDate',      field: 'orderDate'},
-    {headerName: 'RequiredDate',   field: 'requiredDate'},
-    {headerName: 'ShippedDate',    field: 'shippingDate'},
-    {headerName: 'ShipVia',        field: 'shipVia'},
-    {headerName: 'Freight',        field: 'freight'},
-    {headerName: 'ShipName',       field: 'name'},
-    {headerName: 'ShipAddress',    field: 'address'},
-    {headerName: 'ShipCity',       field: 'city'},
-    {headerName: 'ShipRegion',     field: 'region'},
-    {headerName: 'ShipPostalCode', field: 'code'},
-    {headerName: 'ShipCountry',    field: 'country'},
+    //////////////////////////////////////////////////////////////////////////////
+    columnDefsUser = [
+    {headerName: 'First Name',     field: 'firstName', width:100},
+    {headerName: 'Last Name',      field: 'lastName', width:100},
+    {headerName: 'Title',          field: 'title', width:200},
     ];
-     
-    rowData: IOrder[] = [];
-    ////////////////////////////////////////////////////////////
+    
+    columnDefsOrder = [
+      {headerName: 'Order ID',        field: 'orderID', width:100},
+      {headerName: 'Required Date',   field: 'requiredDate', width:150},
+      {headerName: 'Shipped Date',    field: 'shippedDate', width:150},
+      {headerName: 'Order Date',      field: 'orderDate', width:100},
+      {headerName: 'Customer ID',     field: 'customerID', width:150},
+      {headerName: 'Employee ID',     field: 'employeeID', width:80},
+      {headerName: 'Ship Via',        field: 'shipVia', width:80},
+      {headerName: 'Freight',         field: 'freight', width:100 },
+      {headerName: 'Name',            field: 'shipName', width:150},
+      {headerName: 'Address',         field: 'shipAddress', width:150},
+      {headerName: 'City',            field: 'shipCity', width:150},
+      {headerName: 'Region',          field: 'shipRegion', width:150},
+      {headerName: 'Postal Code',     field: 'shipCode', width:150},
+      {headerName: 'Country',         field: 'shipCountry', width:150},
+      ];
+
+    rowDataUser: IUser[] = [];
+    rowDataOrder: IOrder[] = [];
+    selectedRows: IUser[] = [];
+    selectedId: number = -1;
+ 
+    defaultColDef = {
+      sortable: true,
+      filter: true
+    };
+ 
+    //////////////////////////////////////////////////////////////////////////////
 
     constructor(private orderService: OrderListService, private userService: OrderUserService) {}
 
-    ngOnInit(): void {
-      this.sub = this.userService.getUsers().subscribe({
-        next: products => {
-          this.rowData = products;
-        },
-        error: err => this.errorMessage = err
+    users$ = this.userService.users$.subscribe({
+      next: users => {
+        this.rowDataUser = users;
+        console.log('All: ', JSON.stringify(this.rowDataUser));
+      },
+      error: err => this.errorMessage = err
+    });
+    
+    getOrders(id: number): void {
+      //this.orderService.selectedUser = id;
+      this.sub = this.orderService.getOrders(id).subscribe({
+          next: orders => {
+            this.rowDataOrder = orders;
+            console.log('All: ', JSON.stringify(this.rowDataOrder));
+          },
+      error: err => this.errorMessage = err
       });
     }
-  
+
+    onSelectionChanged() {
+      this.selectedRows = this.gridApi.getSelectedRows();
+      if(this.selectedRows.length === 1) 
+      {
+        this.selectedId = this.selectedRows[0].employeeID;
+        this.getOrders(this.selectedId);
+      }
+    }
+    
+    onGridReady(params: GridReadyEvent<IUser>) {
+      this.gridApi = params.api;
+    }
+    
+    //////////////////////////////////////////////////////////////////////////////
     ngOnDestroy(): void {
       this.sub.unsubscribe();
     }
-
-    ngOnUser() {
-                             // .then(svcData => this.rowData = svcData)
-
-    }
-    
  }
 

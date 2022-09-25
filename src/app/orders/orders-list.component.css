@@ -1,0 +1,17 @@
+
+
+.row {
+    display: flex;
+}
+  
+.column {
+    flex: 100%;
+    margin: 20px;
+    padding: 10px;
+    height: 500px;
+}
+
+::ng-deep body {
+    font-family: 'Calibri', sans-serif;
+    }
+
