@@ -1,0 +1,29 @@
+<div class='card'>
+    <div class='card-body'>
+        <div class="row">
+            <div class="column">
+              <label font-family:Calibry>Employees</label>
+              <ag-grid-angular 
+                  style="width: 500px; height:400px" 
+                  class="ag-theme-balham"
+                  rowSelection="single"
+                  (selectionChanged)="onSelectionChanged()"
+                  (gridReady)="onGridReady($event)"
+                  [rowData]="rowDataUser" 
+                  [columnDefs]="columnDefsUser"
+                  [defaultColDef]="defaultColDef">
+              </ag-grid-angular>        
+          </div>
+          <div class="column">
+              <label font-family:Calibry>Territories</label>
+              <ag-grid-angular 
+                  style="width: 400px; height: 400px; " 
+                  class="ag-theme-balham"
+                  [rowData]="rowDataTerritory" 
+                  [columnDefs]="columnDefsTerritory"
+                  [defaultColDef]="defaultColDef">
+              </ag-grid-angular>        
+          </div>
+      </div>
+    </div>
+</div>

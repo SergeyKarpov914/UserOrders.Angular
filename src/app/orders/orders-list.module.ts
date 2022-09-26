@@ -9,6 +9,8 @@ import { OrderListComponent } from './orders-list.component';
     AgGridModule
   ],
   providers: [],
-  bootstrap: [OrderListComponent]
+  bootstrap: [OrderListComponent],
+  declarations: [
+  ]
 })
 export class OrderListModule { }
